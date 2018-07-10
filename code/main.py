@@ -2,15 +2,6 @@ import logging
 from os.path import isdir
 from time import time
 
-import matplotlib.pyplot as plt
-import numpy as np
-from keras import layers
-from keras.datasets import imdb
-from keras.losses import binary_crossentropy
-from keras.metrics import binary_accuracy
-from keras.models import Sequential
-from keras.optimizers import RMSprop
-
 if __name__ == '__main__':
     start_time = time()
 
@@ -29,6 +20,14 @@ if __name__ == '__main__':
     if not output_folder_exists:
         logger.warning('output folder %s does not exist. Quitting.' % output_folder)
         quit()
+
+    input_folder = '../data/'
+
+    input_folder_exists = isdir(input_folder)
+    if not input_folder_exists:
+        logger.warning('input folder %s does not exist. Quitting.' % input_folder)
+        quit()
+
 
     logger.debug('done')
     finish_time = time()
