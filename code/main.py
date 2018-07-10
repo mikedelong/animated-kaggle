@@ -11,9 +11,6 @@ from keras.metrics import binary_accuracy
 from keras.models import Sequential
 from keras.optimizers import RMSprop
 
-
-
-
 if __name__ == '__main__':
     start_time = time()
 
@@ -32,7 +29,6 @@ if __name__ == '__main__':
     if not output_folder_exists:
         logger.warning('output folder %s does not exist. Quitting.' % output_folder)
         quit()
-
 
     logger.debug('done')
     finish_time = time()
