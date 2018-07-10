@@ -28,7 +28,6 @@ if __name__ == '__main__':
         logger.warning('input folder %s does not exist. Quitting.' % input_folder)
         quit()
 
-
     logger.debug('done')
     finish_time = time()
     elapsed_hours, elapsed_remainder = divmod(finish_time - start_time, 3600)
