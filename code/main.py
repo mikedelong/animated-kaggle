@@ -3,6 +3,25 @@ from json import load
 from os.path import isdir
 from time import time
 
+
+def get_setting(arg_setting_name, arg_settings):
+    if arg_setting_name in arg_settings.keys():
+        result = arg_settings[arg_setting_name]
+        return result
+    else:
+        logger.warning('required key %s is not in the settings. Quitting.' % arg_setting_name)
+        quit()
+
+
+def check_exists(arg_folder_name, arg_descriptor):
+    folder_exists = isdir(arg_folder_name)
+    if folder_exists:
+        logger.debug('using %s as the %s folder' % (arg_folder_name, arg_descriptor))
+    else:
+        logger.warning('%s %s does not exist. Quitting.' % (arg_descriptor, arg_folder_name))
+        quit()
+
+
 if __name__ == '__main__':
     start_time = time()
 
@@ -19,33 +38,10 @@ if __name__ == '__main__':
         settings = load(settings_fp)
         logger.debug(settings)
 
-    key = 'input_folder'
-    input_folder = None
-    if key in settings.keys():
-        input_folder = settings[key]
-    else:
-        logger.warning('required key %s is not in the settings. Quitting.' % key)
-        quit()
-    input_folder_exists = isdir(input_folder)
-    if input_folder_exists:
-        logger.debug('using %s as the input folder' % input_folder)
-    else:
-        logger.warning('input folder %s does not exist. Quitting.' % input_folder)
-        quit()
-
-    key = 'output_folder'
-    output_folder = None
-    if key in settings.keys():
-        output_folder = settings[key]
-    else:
-        logger.warning('required key %s is not in the settings. Quitting.' % key)
-        quit()
-    output_folder_exists = isdir(output_folder)
-    if output_folder_exists:
-        logger.debug('using %s as the output folder' % output_folder)
-    else:
-        logger.warning('output folder %s does not exist. Quitting.' % output_folder)
-        quit()
+    input_folder = get_setting('input_folder', settings)
+    check_exists(input_folder, 'input')
+    output_folder = get_setting('output_folder', settings)
+    check_exists(output_folder, 'output')
 
     logger.debug('done')
     finish_time = time()
