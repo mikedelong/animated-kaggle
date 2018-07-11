@@ -52,8 +52,11 @@ if __name__ == '__main__':
         logger.debug('loading data from %s' % full_file_name)
         data = pd.read_csv(full_file_name)
         logger.debug(data.shape)
-        logger.debug(data.columns.values)
-        logger.debug('\n%s' % data.dtypes)
+        for column in data.columns.values:
+            unique_count = data[column].nunique()
+            logger.debug('%s %s %d' % (column, data.dtypes[column], unique_count))
+            if unique_count < 11:
+                logger.debug('\n%s' % data[column].value_counts())
 
     logger.debug('done')
     finish_time = time()
