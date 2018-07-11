@@ -1,4 +1,5 @@
 import logging
+from json import load
 from os.path import isdir
 from time import time
 
@@ -14,10 +15,21 @@ if __name__ == '__main__':
     console_handler.setLevel(logging.DEBUG)
     logger.debug('started')
 
-    output_folder = '../output/'
+    with open('./settings.json') as settings_fp:
+        settings = load(settings_fp)
+        logger.debug(settings)
 
+    key = 'output_folder'
+    output_folder = None
+    if key in settings.keys():
+        output_folder = settings[key]
+    else:
+        logger.warning('required key %s is not in the settings. Quitting.' % key)
+        quit()
     output_folder_exists = isdir(output_folder)
-    if not output_folder_exists:
+    if output_folder_exists:
+        logger.debug('using %s as the output folder' % output_folder)
+    else:
         logger.warning('output folder %s does not exist. Quitting.' % output_folder)
         quit()
 
