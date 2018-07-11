@@ -3,6 +3,8 @@ from json import load
 from os.path import isdir
 from time import time
 
+import pandas as pd
+
 
 def get_setting(arg_setting_name, arg_settings):
     if arg_setting_name in arg_settings.keys():
@@ -42,6 +44,16 @@ if __name__ == '__main__':
     check_exists(input_folder, 'input')
     output_folder = get_setting('output_folder', settings)
     check_exists(output_folder, 'output')
+
+    file_list = get_setting('file_list', settings)
+
+    for item in file_list:
+        full_file_name = input_folder + item
+        logger.debug('loading data from %s' % full_file_name)
+        data = pd.read_csv(full_file_name)
+        logger.debug(data.shape)
+        logger.debug(data.columns.values)
+        logger.debug('\n%s' % data.dtypes)
 
     logger.debug('done')
     finish_time = time()
