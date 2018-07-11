@@ -3,6 +3,7 @@ from json import load
 from os.path import isdir
 from time import time
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -54,9 +55,15 @@ if __name__ == '__main__':
         logger.debug(data.shape)
         for column in data.columns.values:
             unique_count = data[column].nunique()
-            logger.debug('%s %s %d' % (column, data.dtypes[column], unique_count))
+            data_type = data.dtypes[column]
+            logger.debug('%s %s %d' % (column, data_type, unique_count))
             if unique_count < 11:
                 logger.debug('\n%s' % data[column].value_counts())
+            if data_type != 'object':
+                data[column].plot.hist()
+                output_file_name = output_folder + item.replace('.csv', '') + '_' + column + '.png'
+                plt.savefig(output_file_name)
+                plt.clf()
 
     logger.debug('done')
     finish_time = time()
