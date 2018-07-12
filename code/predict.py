@@ -3,7 +3,9 @@ from json import load
 from os.path import isdir
 from time import time
 
+import numpy as np
 import pandas as pd
+from sklearn.preprocessing import LabelEncoder
 from sklearn.tree import DecisionTreeRegressor
 
 
@@ -58,6 +60,21 @@ if __name__ == '__main__':
 
     # get the target before we do any feature engineering
     target = train_df['TARGET'].values
+
+    # get the fields where we want to do label encoding
+    fields_to_label_encode = get_setting('fields_to_label_encode', settings)
+    logger.debug('we will use the label encoder for the following fields: %s' % fields_to_label_encode)
+    for field in fields_to_label_encode:
+        if train_df.dtypes[field] == 'object':
+            train_df[field].replace(np.nan, '', regex=True, inplace=True)
+            test_df[field].replace(np.nan, '', regex=True, inplace=True)
+        encoder = LabelEncoder()
+        logger.debug('field %s has unique values %s' % (field, train_df[field].unique()))
+        encoder.fit(train_df[field])
+        train_df[field] = encoder.transform(train_df[field])
+        logger.debug('done transforming the training data, field %s' % field)
+        test_df[field] = encoder.transform(test_df[field])
+        logger.debug('done transforming the test data, field %s' % field)
 
     # after feature engineering align the two data frames
     train_df, test_df = train_df.align(test_df, join='inner', axis=1)
