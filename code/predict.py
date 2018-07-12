@@ -3,6 +3,8 @@ from json import load
 from os.path import isdir
 from time import time
 
+import pandas as pd
+
 
 def get_setting(arg_setting_name, arg_settings):
     if arg_setting_name in arg_settings.keys():
@@ -43,7 +45,15 @@ if __name__ == '__main__':
     output_folder = get_setting('output_folder', settings)
     check_exists(output_folder, 'output')
     training_data_file = get_setting('training_data_file', settings)
+    full_training_data_file = input_folder + training_data_file
+    logger.debug('loading data from %s' % full_training_data_file)
+    training_df = pd.read_csv(full_training_data_file)
+    logger.debug('training data has shape %d x %d' % training_df.shape)
     test_data_file = get_setting('test_data_file', settings)
+    full_test_data_file = input_folder + test_data_file
+    logger.debug('loading data from %s' % full_test_data_file)
+    test_df = pd.read_csv(full_test_data_file)
+    logger.debug('training data has shape %d x %d' % test_df.shape)
 
     logger.debug('done')
     finish_time = time()
