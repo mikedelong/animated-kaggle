@@ -4,6 +4,7 @@ from os.path import isdir
 from time import time
 
 import pandas as pd
+from sklearn.tree import DecisionTreeRegressor
 
 
 def get_setting(arg_setting_name, arg_settings):
@@ -47,13 +48,31 @@ if __name__ == '__main__':
     training_data_file = get_setting('training_data_file', settings)
     full_training_data_file = input_folder + training_data_file
     logger.debug('loading data from %s' % full_training_data_file)
-    training_df = pd.read_csv(full_training_data_file)
-    logger.debug('training data has shape %d x %d' % training_df.shape)
+    train_df = pd.read_csv(full_training_data_file)
+    logger.debug('training data has shape %d x %d' % train_df.shape)
     test_data_file = get_setting('test_data_file', settings)
     full_test_data_file = input_folder + test_data_file
     logger.debug('loading data from %s' % full_test_data_file)
     test_df = pd.read_csv(full_test_data_file)
     logger.debug('training data has shape %d x %d' % test_df.shape)
+
+    # get the target before we do any feature engineering
+    target = train_df['TARGET'].values
+
+    # after feature engineering align the two data frames
+    train_df, test_df = train_df.align(test_df, join='inner', axis=1)
+    logger.debug('after alignment the training data has shape %d x %d' % train_df.shape)
+    logger.debug('after alignment the test data has shape %d x %d' % test_df.shape)
+
+    random_state = get_setting('random_state', settings)
+    # build the model
+    model = DecisionTreeRegressor(criterion='mse', splitter='best', max_depth=None, min_impurity_split=2,
+                                  min_samples_leaf=1, min_weight_fraction_leaf=0.0, max_features=None,
+                                  random_state=random_state, max_leaf_nodes=None, presort=False,
+                                  min_impurity_decrease=0.0)
+
+    model.fit(X=train_df, y=target, sample_weight=None, check_input=True, X_idx_sorted=None)
+    y_pred = model.predict(X=test_df, check_input=True)
 
     logger.debug('done')
     finish_time = time()
