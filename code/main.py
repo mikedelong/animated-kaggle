@@ -37,7 +37,7 @@ if __name__ == '__main__':
     console_handler.setLevel(logging.DEBUG)
     logger.debug('started')
 
-    with open('./settings.json') as settings_fp:
+    with open('./settings-main.json') as settings_fp:
         settings = load(settings_fp)
         logger.debug(settings)
 
