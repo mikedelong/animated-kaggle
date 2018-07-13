@@ -57,7 +57,7 @@ if __name__ == '__main__':
             unique_count = data[column].nunique()
             data_type = data.dtypes[column]
             logger.debug('%s %s %d' % (column, data_type, unique_count))
-            if unique_count < 11:
+            if unique_count < 100:
                 logger.debug('\n%s' % data[column].value_counts())
             if data_type != 'object':
                 data[column].plot.hist()
