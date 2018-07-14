@@ -64,10 +64,12 @@ if __name__ == '__main__':
     # get the fields where we want to do label encoding
     fields_to_label_encode = get_setting('fields_to_label_encode', settings)
     logger.debug('we will use the label encoder for the following fields: %s' % fields_to_label_encode)
+    logger.debug(train_df.dtypes)
     for field in fields_to_label_encode:
         if train_df.dtypes[field] == 'object':
             train_df[field].replace(np.nan, '', regex=True, inplace=True)
             test_df[field].replace(np.nan, '', regex=True, inplace=True)
+
         encoder = LabelEncoder()
         logger.debug('field %s has unique values %s' % (field, train_df[field].unique()))
         encoder.fit(train_df[field])
@@ -75,6 +77,13 @@ if __name__ == '__main__':
         logger.debug('done transforming the training data, field %s' % field)
         test_df[field] = encoder.transform(test_df[field])
         logger.debug('done transforming the test data, field %s' % field)
+
+    logger.debug(train_df.dtypes)
+
+    # look for infinite values
+    for column in train_df.columns.values:
+        if train_df.dtypes[column] == 'float64':
+            train_df[column].replace(np.inf, -1.0, inplace=True)
 
     # after feature engineering align the two data frames
     train_df, test_df = train_df.align(test_df, join='inner', axis=1)
